@@ -54,7 +54,6 @@ function uploadFiles () {
  */
 function processFile (event) {
   var content = event.target.result;
-  console.log(content)
   sendFileToCloudVision(content.replace('data:image/jpeg;base64,', ''));
 }
 
@@ -74,7 +73,7 @@ function sendFileToCloudVision (content) {
       },
       features: [{
         type: type,
-        maxResults: 200
+        maxResults: 40
       }]
     }]
   };
@@ -95,7 +94,16 @@ function sendFileToCloudVision (content) {
  */
 function displayJSON (data) {
   var contents = JSON.stringify(data, null, 4);
-  $('#results').text(contents);
+  var annotations = JSON.stringify(data.responses[0].labelAnnotations, null, 4);
+  var annotationCounts = Object.keys(data.responses[0].labelAnnotations).length;
+  var descriptions = "";
+  for (var anno in data.responses[0].labelAnnotations){
+    descriptions += JSON.stringify(data.responses[0].labelAnnotations[anno].description, null, 4);
+    descriptions += " "
+  }
+  console.log("annotations: " + annotationCounts)
+  console.log(contents);
+  $('#results').text(descriptions);
   var evt = new Event('results-displayed');
   evt.results = contents;
   document.dispatchEvent(evt);

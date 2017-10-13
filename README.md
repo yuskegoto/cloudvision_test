@@ -16,3 +16,5 @@ This directory contains [Cloud Vision API](https://cloud.google.com/vision/) Cli
 
 From here, the demo allows you to upload images and process them using the various [Cloud Vision API annotation types](https://cloud.google.com/vision/reference/rest/v1/images/annotate#Type).
 
+## About additional cam picture taking
+1. Uploading works only with jpeg, base64 encoded picture.

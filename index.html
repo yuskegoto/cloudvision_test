@@ -65,11 +65,11 @@
 <body>
   <form id="fileform" action="">
     <select name="type" id="type">
+      <option value="LABEL_DETECTION">LABEL_DETECTION</option>
       <option value="LANDMARK_DETECTION">LANDMARK_DETECTION</option>
       <option value="TYPE_UNSPECIFIED">TYPE_UNSPECIFIED</option>
       <option value="FACE_DETECTION">FACE_DETECTION</option>
       <option value="LOGO_DETECTION">LOGO_DETECTION</option>
-      <option value="LABEL_DETECTION">LABEL_DETECTION</option>
       <option value="TEXT_DETECTION">TEXT_DETECTION</option>
       <option value="SAFE_SEARCH_DETECTION">SAFE_SEARCH_DETECTION</option>
       <option value="IMAGE_PROPERTIES">IMAGE_PROPERTIES</option>
@@ -79,7 +79,6 @@
   </form>
 
 <!--  <code style="white-space:pre" id="results"></code>-->
-  <div id="results"></div>
 
     <div class="camera">
       <video id="video">Video stream not available.</video>
@@ -91,5 +90,6 @@
       <img id="photo" alt="The screen capture will appear in this box.">
     </div>
   <button id = "submitbtn" onClick="uploadFiles()">submit</button>
+  <div id="results"></div>
 </body>
 </html>
