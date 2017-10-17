@@ -24,9 +24,7 @@ $(function () {
  * 'submit' event handler - reads the image bytes and sends it to the Cloud
  * Vision API.
  */
-//function uploadFiles (event) {
-//  event.stopPropagation();
-//  event.preventDefault(); // Prevent the default form post
+
 function uploadFiles () {
   console.log("uploading")
 

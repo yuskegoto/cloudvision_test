@@ -23,6 +23,8 @@
   // up frequency of uploading
   var upLoadCycle = 5000;
 
+  var screenMode = "";
+
   function startup() {
     console.log("starting up");
     video = document.getElementById('video');
@@ -63,15 +65,17 @@
      console.log("No getUserMedia.")
    }
 
+   screenMode = screen.orientation.type;
+
     video.addEventListener('canplay', function(ev){
       if (!streaming) {
-        height = video.videoHeight / (video.videoWidth/width);
-
-        // Firefox currently has a bug where the height can't be read from
-        // the video, so we will make assumptions if this happens.
-
-        if (isNaN(height)) {
-          height = width / (4/3);
+        //set video orientation according to the orientation
+        if (screen.orientation.type.startsWith('portrait')){
+          height = width;
+          width = video.videoWidth / (video.videoHeight/height);
+        }
+        else{
+          height = video.videoHeight / (video.videoWidth/width);
         }
 
         video.setAttribute('width', width);
@@ -79,7 +83,7 @@
         canvas.setAttribute('width', width);
         canvas.setAttribute('height', height);
         streaming = true;
-        console.log("width: " + width + " height: "+ height);
+        // console.log("width: " + width + " height: "+ height);
       }
     }, false);
 
@@ -147,7 +151,47 @@
     }
   }
 
-  // Set up our event listener to run the startup process
-  // once loading is complete.
-  window.addEventListener('load', startup, false);
+//detects device rotation and swaps height and width according to the orentation
+function detectRotation(){
+  // console.log("size change");
+
+  if(screenMode !== screen.orientation.type) {
+    // console.log("rotation detected")
+    if((screen.orientation.type.startsWith('landscape') &&
+      screenMode.startsWith('portrait')) ||
+      (screen.orientation.type.startsWith('portrait') &&
+      screenMode.startsWith('landscape'))) {
+
+      //swap height and width
+      if ((width > height) && (screen.orientation.type.startsWith('portrait'))) {
+        var widthTemp = width;
+        width = height;
+        height = widthTemp;
+        // console.log("to portrait");
+      }
+      else{
+        var widthTemp = width;
+        width = height;
+        height = widthTemp;
+        // console.log("to landscape");
+      }
+
+      video = document.getElementById('video');
+      canvas = document.getElementById('canvas');
+      video.setAttribute('width', width);
+      video.setAttribute('height', height);
+      video.setAttribute('width', width);
+      video.setAttribute('height', height);
+      screenMode = screen.orientation.type;
+      // console.log(screenMode);
+    }
+  }
+}
+
+// detect rotation by watching resize function
+window.addEventListener('resize', detectRotation, false);
+
+// Set up our event listener to run the startup process
+// once loading is complete.
+window.addEventListener('load', startup, false);
 // })();
