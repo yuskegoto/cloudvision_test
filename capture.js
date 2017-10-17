@@ -43,7 +43,8 @@
    if (navigator.getUserMedia){
      navigator.getUserMedia(
         {
-          video: true,
+          // video: true,
+          video: { facingMode: "environment"},    // Activate rear camera (environemnt) on mobile device if available
           audio: false
         },
         function(stream) {
