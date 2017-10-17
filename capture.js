@@ -1,4 +1,4 @@
-(function() {
+// (function() {
   // The width and height of the captured photo. We will set the
   // width to the value defined here, but the height will be
   // calculated based on the aspect ratio of the input stream.
@@ -10,6 +10,7 @@
   // video from the camera. Obviously, we start at false.
 
   var streaming = false;
+  var videoStarted = false;
 
   // The various HTML elements we need to configure or control. These
   // will be set by the startup() function.
@@ -19,35 +20,48 @@
   var photo = null;
   var takebutton = null;
 
+  // up frequency of uploading
+  var upLoadCycle = 5000;
+
   function startup() {
+    console.log("starting up");
     video = document.getElementById('video');
     canvas = document.getElementById('canvas');
     // photo = document.getElementById('photo');
     takebutton = document.getElementById('takebutton');
 
-    navigator.getMedia = ( navigator.getUserMedia ||
+    navigator.getUserMedia = ( navigator.getUserMedia ||
                            navigator.webkitGetUserMedia ||
                            navigator.mozGetUserMedia ||
-                           navigator.msGetUserMedia);
+                           navigator.msGetUserMedia ||
+                           navigator.mediaDevices.getUserMedia);
 
-    navigator.getMedia(
-      {
-        video: true,
-        audio: false
-      },
-      function(stream) {
-        if (navigator.mozGetUserMedia) {
-          video.mozSrcObject = stream;
-        } else {
-          var vendorURL = window.URL || window.webkitURL;
-          video.src = vendorURL.createObjectURL(stream);
+   window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL;
+
+   if (navigator.getUserMedia){
+     navigator.getUserMedia(
+        {
+          video: true,
+          audio: false
+        },
+        function(stream) {
+          this.stream = stream;
+          if (navigator.mozCaptureStream) {
+            video.mozSrcObject = stream;
+          } else {
+					  video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+          }
+          // video.play();    //on mobile device user needs to intiate this action
+        },
+        function(err) {
+          console.log("An error occured! " + err);
         }
-        video.play();
-      },
-      function(err) {
-        console.log("An error occured! " + err);
-      }
-    );
+      );
+
+   }
+   else {
+     console.log("No getUserMedia.")
+   }
 
     video.addEventListener('canplay', function(ev){
       if (!streaming) {
@@ -65,24 +79,24 @@
         canvas.setAttribute('width', width);
         canvas.setAttribute('height', height);
         streaming = true;
+        console.log("width: " + width + " height: "+ height);
       }
     }, false);
 
-    takebutton.addEventListener('click', function(ev){
-      toggleShooting();
-      ev.preventDefault();
-    }, false);
-
-    // video.addEventListener('click', function(ev){
-    //   takeUpload();
+    // Event listener for start uploading
+    // takebutton.addEventListener('click', function(ev){
+    //   toggleShooting();
     //   ev.preventDefault();
     // }, false);
 
-    // clearphoto();
   }
 
-  // Fill the photo with an indication that none has been
-  // captured.
+  function startVideo(){
+    video = document.getElementById('video');
+    video.play();
+    console.log("video started");
+    videoStarted = true;
+  }
 
   function takeUpload(){
     takepicture();
@@ -100,11 +114,14 @@
     }
   }
 
+  // Container for Interval uploading function
   var intervalShot;
 
   function setIntervalShooting(){
+    if (!videoStarted) startVideo();
+
     console.log("interval set");
-    intervalShot = setInterval(function(){takeUpload()},5000);
+    intervalShot = setInterval(function(){takeUpload()},upLoadCycle);    // Uploading function fired in every 5 seconds, not including uploading time
     shooting = true;
     $("#takebutton").html('Stop');
     takeUpload();
@@ -115,23 +132,8 @@
     clearInterval(intervalShot);
     shooting = false;
     $("#takebutton").html('Start');
-    $('#results').text('Click button to start...');
+    $('#results').text('Click button to start');
   }
-
-  // function clearphoto() {
-  //   var context = canvas.getContext('2d');
-  //   context.fillStyle = "#AAA";
-  //   context.fillRect(0, 0, canvas.width, canvas.height);
-  //
-  //   var data = canvas.toDataURL('image/png');
-  //   photo.setAttribute('src', data);
-  // }
-
-  // Capture a photo by fetching the current contents of the video
-  // and drawing it into a canvas, then converting that to a PNG
-  // format data URL. By drawing it on an offscreen canvas and then
-  // drawing that to the screen, we can change its size and/or apply
-  // other changes before drawing it.
 
   function takepicture() {
     var context = canvas.getContext('2d');
@@ -140,14 +142,12 @@
       canvas.height = height;
       context.drawImage(video, 0, 0, width, height);
 
-      var data = canvas.toDataURL('image/png');
-      // photo.setAttribute('src', data);
+      // var data = canvas.toDataURL('image/jpeg');
     } else {
-      // clearphoto();
     }
   }
 
   // Set up our event listener to run the startup process
   // once loading is complete.
   window.addEventListener('load', startup, false);
-})();
+// })();

@@ -12,7 +12,7 @@
 // limitations under the License.
 
 'use strict';
-
+// var api_key = API_KEY;
 var CV_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + api_key;
 
 
@@ -30,15 +30,15 @@ $(function () {
 function uploadFiles () {
   console.log("uploading")
 
-  // Grab the file and asynchronously convert to base64.
-  // var file = $('#fileinput')[0].files[0];
-
   var reader = new FileReader();
   reader.onloadend = processFile;
 
+  //Grabbing video frame from canvas
    var file = document.getElementById("canvas");
    file.toBlob(function(blob){
        reader.readAsDataURL(blob);
+
+/***** below is test for grabbing video frame**********************/
       //  var newImg = document.createElement('img'),
       //     url = URL.createObjectURL(blob);
       //  newImg.onload = function(){
@@ -46,9 +46,7 @@ function uploadFiles () {
       //  };
       //  newImg.src = url;
       //  document.body.appendChild(newImg);
-   }, 'image/jpeg', 0.8);
-
-    // reader.readAsDataURL(file);
+   }, 'image/jpeg', 0.8);   // uploaded picture must be jpeg
 }
 
 /**
@@ -67,7 +65,7 @@ function sendFileToCloudVision (content) {
 
   var type = $('#fileform [name=type]').val();
 
-  // Strip out the file prefix when you convert to json.
+  // Requet form for uploading
   var request = {
     requests: [{
       image: {
@@ -75,12 +73,16 @@ function sendFileToCloudVision (content) {
       },
       features: [{
         type: type,
-        maxResults: 40
+        maxResults: 4
       }]
     }]
   };
 
-  $('#results').text('Loading...');
+  //uploading indication
+  var descriptionsNow = $('#results').text();
+  descriptionsNow += " ...";
+  $('#results').text(descriptionsNow);
+
   $.post({
     url: CV_URL,
     data: JSON.stringify(request),
@@ -96,22 +98,19 @@ function sendFileToCloudVision (content) {
  */
 function displayJSON (data) {
   var contents = JSON.stringify(data, null, 4);
-  var annotations = JSON.stringify(data.responses[0].labelAnnotations, null, 4);
   var annotationCounts = Object.keys(data.responses[0].labelAnnotations).length;
+
+  // extract descriptions
   var descriptions = "";
-  if (annotationCounts > 4){
-    annotationCounts = 4;
-  }
-  // extract top four descriptions
   for (var i = 0 ; i < annotationCounts; i ++){
     descriptions += JSON.stringify(data.responses[0].labelAnnotations[i].description);
-    if (i < annotationCounts -1){
+    if (i < annotationCounts - 1){
       descriptions += " / ";
     }
   }
   descriptions = descriptions.replace(/"/g, "");    //remove " from the string
 
-  console.log(contents);
+  // console.log(contents);
   $('#results').text(descriptions);
   var evt = new Event('results-displayed');
   evt.results = contents;

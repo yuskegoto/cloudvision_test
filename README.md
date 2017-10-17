@@ -1,4 +1,9 @@
-# Google Cloud Vision API Client Side JS examples
+Google Cloud Vision API Client Side JS demo for apd
+by: Yuske Goto
+
+Based on th client side JS demo by Terrence Ryan
+http://terrenceryan.com/blog/index.php/working-with-cloud-vision-api-from-javascript/
+
 
 This directory contains [Cloud Vision API](https://cloud.google.com/vision/) Client Side JS samples.
 
@@ -6,7 +11,6 @@ This directory contains [Cloud Vision API](https://cloud.google.com/vision/) Cli
 1. [Sign up for Google Cloud Platform Account](http://cloud.google.com)
 2. [Enable Cloud Vision API](https://cloud.google.com/vision/docs/getting-started)
 3. [Create a Browser Key](https://cloud.google.com/vision/docs/auth-template/cloud-api-auth) for making calls to Cloud Vision API
-
 
 ## Setup
 1. Rename the file *key.js.example* to *key.js*.
