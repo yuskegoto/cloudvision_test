@@ -1,7 +1,8 @@
 Google Cloud Vision API Client Side JS demo for apd
 by: Yuske Goto
 
-You can check out this demo <a href="http://apd.yuskegoto.de/cloudvision/index.html">here</a>
+You can check out this demo <a href="https://apd.yuskegoto.de/cloudvision/index.html">here</a>
+This demo also runs Android Chrome. Probably also works on iOS 11. But not yet tested.
 
 Based on th client side JS demo by Terrence Ryan
 http://terrenceryan.com/blog/index.php/working-with-cloud-vision-api-from-javascript/
